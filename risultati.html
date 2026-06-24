@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultati in Tempo Reale</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Libreria per i grafici -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #fff; padding: 20px; }
+        .chart-container { width: 80%; max-width: 600px; margin: 50px auto; }
+    </style>
+</head>
+<body>
+
+    <h1>Risultati del Voto Live</h1>
+    
+    <div class="chart-container">
+        <canvas id="graficoVoti"></canvas>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://orzpwezibuzpchehvdkw.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_uasoAypqJOLzeJAQpfU9qA__5c4SKTK";
+        const supabase = @supabase/supabase-js.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Configurazione iniziale del grafico (Chart.js)
+        const ctx = document.getElementById('graficoVoti').getContext('2d');
+        const grafico = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Blu 'Rossi'],
+                datasets: [{
+                    label: 'Numero di Voti',
+                    data: [0, 0], // Dati di partenza
+                    backgroundColor: ['#3b82f6', '#ef4444'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        // Funzione per caricare i dati attuali dal DB e aggiornare il grafico
+        async function caricaEInizializzaDati() {
+            let { data } = await supabase.from('voti_totali').select('*');
+            
+            // Ordiniamo i dati per assicurarci che vadano al posto giusto nel grafico
+            const votoA = data.find(d => d.id === 'opzione_a')?.conteggio || 0;
+            const votoB = data.find(d => d.id === 'opzione_b')?.conteggio || 0;
+
+            grafico.data.datasets[0].data = [votoA, votoB];
+            grafico.update();
+        }
+
+        // 1. Carica i voti subito all'apertura della pagina
+        caricaEInizializzaDati();
+
+        // 2. ASCOLTA IN TEMPO REALE: ogni volta che la tabella cambia, ricarica i dati
+        supabase
+            .channel('cambiamenti-voti')
+            .on('postgres_changes', { event: 'UPDATE', scheme: 'public', table: 'voti_totali' }, () => {
+                caricaEInizializzaDati();
+            })
+            .subscribe();
+    </script>
+</body>
+</html>
