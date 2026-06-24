@@ -38,7 +38,8 @@
     <script>
         const SUPABASE_URL = "https://orzpwezibuzpchehvdkw.supabase.co";
         const SUPABASE_KEY = "sb_publishable_uasoAypqJOLzeJAQpfU9qA__5c4SKTK";
-        const supabase = @supabase/supabase-js.createClient(SUPABASE_URL, SUPABASE_KEY);
+         // CORRETTO: Uso dell'oggetto globale window.supabase e cambio nome variabile
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Configurazione Chart.js
         const ctx = document.getElementById('graficoVoti').getContext('2d');
@@ -59,7 +60,7 @@
         });
 
         async function caricaEInizializzaDati() {
-            let { data } = await supabase.from('voti_totali').select('*');
+            let { data } = await supabaseClient.from('voti_totali').select('*');
             const votoA = data.find(d => d.id === 'opzione_a')?.conteggio || 0;
             const votoB = data.find(d => d.id === 'opzione_b')?.conteggio || 0;
             grafico.data.datasets[0].data = [votoA, votoB];
@@ -70,8 +71,8 @@
         async function resetVotazione() {
             if (confirm("Sei sicuro di voler azzerare tutti i voti?")) {
                 // Porta a 0 l'opzione A e l'opzione B su Supabase
-                await supabase.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_a');
-                await supabase.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_b');
+                await supabaseClient.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_a');
+                await supabaseClient.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_b');
                 
                 // Consente a te stesso di votare di nuovo se fai un test
                 localStorage.removeItem("haVotato");
@@ -83,7 +84,7 @@
         caricaEInizializzaDati();
 
         // Realtime
-        supabase
+        supabaseClient
             .channel('cambiamenti-voti')
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'voti_totali' }, () => {
                 caricaEInizializzaDati();
