@@ -3,55 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vota l'Opzione</title>
+    <title>Vota l'Improvvisazione - Arsenale delle Apparizioni</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f2f5; padding-top: 50px; margin: 0; }
-        .btn-container { display: flex; justify-content: center; gap: 20px; margin-top: 40px; }
-        button { padding: 20px 40px; font-size: 20px; cursor: pointer; border: none; border-radius: 8px; color: white; transition: 0.2s; }
-        .btn-a { background-color: #3b82f6; } /* Blu */
-        .btn-b { background-color: #ef4444; } /* Rosso */
-        button:hover { opacity: 0.9; }
+        /* FONT TEATRALE E MODERNO */
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap');
 
-        /* OVERLAY DI BLOCCO */
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background: #111; /* Sfondo quasi nero come un teatro scuro */
+            color: #eee;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #container {
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* HEADER CON LOGO E TESTO CURVO */
+        #header-logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        #title {
+            font-family: 'Anton', sans-serif;
+            font-size: 36px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+            margin-bottom: 40px;
+        }
+
+        /* BOTTONI GRANDI E MODERNI */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        button {
+            flex: 1;
+            padding: 30px;
+            font-family: 'Anton', sans-serif;
+            font-size: 24px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            transition: transform 0.1s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Effetto luce al passaggio del mouse */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Blu Elettrico/Neon */
+        .btn-a {
+            background-color: #007bff;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+        }
+        .btn-a:hover {
+            box-shadow: 0 0 25px rgba(0, 123, 255, 0.8);
+        }
+
+        /* Rosso Neon/Passione */
+        .btn-b {
+            background-color: #dc3545;
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+        }
+        .btn-b:hover {
+            box-shadow: 0 0 25px rgba(220, 53, 69, 0.8);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* OVERLAY DI BLOCCO: AD ANELLO CON LOGO */
         #overlay {
-            display: none; /* Nascosto di default */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75); /* Sfondo scuro semitrasparente */
-            backdrop-filter: blur(4px); /* Effetto sfocato sullo sfondo */
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
             z-index: 9999;
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
 
+        /* Immagine del logo nell'overlay */
+        #overlay-logo {
+            width: 250px; /* Più grande per l'overlay */
+            margin-bottom: 20px;
+        }
+
         #messaggio {
-            color: #10b981;
+            color: #10b981; /* Verde successo */
             font-size: 28px;
             font-weight: bold;
-            background: white;
-            padding: 20px 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Sotto-testo nell'overlay */
+        #sub-messaggio {
+            color: #aaa;
+            font-size: 16px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div id="voto-box">
-        <h1>Quale opzione preferisci?</h1>
-        <div class="btn-container">
-            <button class="btn-a" onclick="vota('opzione_a')">Blu</button>
-            <button class="btn-b" onclick="vota('opzione_b')">Rossi</button>
+    <div id="overlay">
+        <img src="logo_arsenale.png" alt="Logo Arsenale delle Apparizioni" id="overlay-logo">
+        <div id="messaggio">
+            Voto registrato!<br>
+            Il sipario è calato per il tuo voto. ✅
         </div>
+        <div id="sub-messaggio">Grazie per aver partecipato.</div>
     </div>
 
-    <div id="overlay">
-        <div id="messaggio">Grazie! Il tuo voto è stato registrato. ✅</div>
+    <div id="container">
+        <img src="logo_arsenale.png" alt="Logo Arsenale delle Apparizioni" id="header-logo">
+        <h1 id="title">Quale spettacolo merita la standing ovation?</h1>
+
+        <div class="btn-container">
+            <button class="btn-a" onclick="vota('opzione_a')">Spettacolo A</button>
+            <button class="btn-b" onclick="vota('opzione_b')">Spettacolo B</button>
+        </div>
     </div>
 
     <script>
@@ -62,7 +179,6 @@
 
         const overlay = document.getElementById("overlay");
 
-        // Funzione per mostrare o nascondere l'overlay a seconda del LocalStorage
         function controllaStatoVoto() {
             if (localStorage.getItem("haVotato") === "true") {
                 overlay.style.display = "flex";
@@ -71,32 +187,21 @@
             }
         }
 
-        // Avvia il controllo subito al caricamento della pagina
         controllaStatoVoto();
-
-        // CONTROLLO CONTINUO (Ogni 1 secondo): 
-        // Se rimuovi l'item dal LocalStorage (es. tramite console o script di reset), l'overlay scompare da solo
         setInterval(controllaStatoVoto, 1000);
 
         async function vota(opzione) {
-            // 1. Salva nel localStorage e mostra istantaneamente l'overlay
             localStorage.setItem("haVotato", "true");
             controllaStatoVoto();
 
             try {
-                // 2. Recupera il conteggio attuale
                 let { data, error } = await supabaseClient.from('voti_totali').select('conteggio').eq('id', opzione).single();
                 if (error) throw error;
                 
                 let nuovoConteggio = data.conteggio + 1;
-
-                // 3. Aggiorna il database
                 await supabaseClient.from('voti_totali').update({ conteggio: nuovoConteggio }).eq('id', opzione);
             } catch (err) {
                 console.error("Errore durante il voto:", err);
-                // In caso di errore grave di rete, puoi decidere se sbloccare l'utente togliendo il commento qui sotto:
-                // localStorage.removeItem("haVotato");
-                // controllaStatoVoto();
             }
         }
     </script>
