@@ -22,8 +22,8 @@
         }
 
         #container {
-            width: 90%;
-            max-width: 700px;
+            width: 95%;
+            max-width: 900px; /* Aumentato per ospitare le barre più grandi */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -32,28 +32,42 @@
 
         /* HEADER CON LOGO */
         #header-logo {
-            width: 120px;
+            width: 140px; /* Leggermente più grande per bilanciare il testo */
             margin-bottom: 20px;
         }
 
         #title {
             font-family: 'Anton', sans-serif;
-            font-size: 32px;
+            font-size: 64px;
             color: #fff;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
             margin-top: 10px;
-            margin-bottom: 50px;
+            margin-bottom: 10px;
+            
+            /* Costringe il testo su un'unica riga */
+            white-space: nowrap; 
         }
 
-        /* CONTENITORE RISULTATI CON BARRE AL NEON */
+        #subtitle {
+            font-family: 'Anton', sans-serif;
+            font-size: 38px;
+            color: #888; /* Un grigio leggero per dare contrasto al titolo */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+            margin-top: 0;
+            margin-bottom: 60px;
+        }
+
+        /* CONTENITORE RISULTATI CON BARRE MAGGIORATE */
         #results-container {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            margin-bottom: 50px;
+            gap: 40px; /* Più spazio tra le due barre */
+            margin-bottom: 60px;
         }
 
         .result-bar-group {
@@ -61,67 +75,72 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 25px 30px; /* Più respiro interno */
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
             box-sizing: border-box;
         }
 
+        /* NOMI DELLE BARRE INGRANDITI */
         .label {
             font-family: 'Anton', sans-serif;
-            font-size: 20px;
+            font-size: 32px; /* Aumentato da 20px */
             text-transform: uppercase;
-            flex: 0 0 140px;
+            letter-spacing: 1px;
+            flex: 0 0 220px; /* Allargata la base per i testi più grandi */
             text-align: left;
         }
 
+        /* ALTEZZA DELLA BARRA AUMENTATA */
         .bar-wrapper {
             flex: 1;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            height: 50px; /* Aumentato da 30px per dare più impatto visivo */
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 25px;
             overflow: hidden;
-            margin: 0 20px;
+            margin: 0 25px;
             position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .bar {
             height: 100%;
             width: 0%;
-            transition: width 0.5s ease-out;
-            border-radius: 15px;
+            transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Transizione ancora più fluida ed elegante */
+            border-radius: 25px;
         }
 
-        .label-a { color: #007bff; }
+        .label-a { color: #007bff; text-shadow: 0 0 10px rgba(0, 123, 255, 0.3); }
         .bar-a {
             background: linear-gradient(90deg, #007bff, #00d4ff);
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
         }
 
-        .label-b { color: #dc3545; }
+        .label-b { color: #dc3545; text-shadow: 0 0 10px rgba(220, 53, 69, 0.3); }
         .bar-b {
             background: linear-gradient(90deg, #dc3545, #ff4b5c);
-            box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
         }
 
+        /* NUMERO DEI VOTI INGRANDITO */
         .count {
             font-family: 'Anton', sans-serif;
-            font-size: 24px;
-            flex: 0 0 60px;
+            font-size: 38px; /* Aumentato da 24px */
+            flex: 0 0 80px;
             text-align: right;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
         }
 
         /* PULSANTE DI RESET STILIZZATO */
         .btn-reset {
             background-color: #222;
-            color: #888;
-            border: 1px solid #444;
-            padding: 12px 24px;
+            color: #666;
+            border: 1px solid #333;
+            padding: 12px 28px;
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
             border-radius: 8px;
@@ -131,10 +150,19 @@
         }
 
         .btn-reset:hover {
-            background-color: #dc3545; /* Diventa rosso al passaggio */
+            background-color: #dc3545;
             color: #fff;
             border-color: #dc3545;
             box-shadow: 0 0 15px rgba(220, 53, 69, 0.5);
+        }
+
+        /* Responsive di sicurezza per schermi molto piccoli (smartphone vecchi) */
+        @media (max-width: 650px) {
+            #title { font-size: 44px; white-space: normal; }
+            .label { font-size: 24px; flex: 0 0 140px; }
+            .count { font-size: 28px; }
+            .bar-wrapper { height: 35px; margin: 0 10px; }
+            .result-bar-group { padding: 15px; }
         }
     </style>
 </head>
@@ -142,11 +170,12 @@
 
     <div id="container">
         <img src="logo_arsenale.png" alt="Logo Arsenale delle Apparizioni" id="header-logo">
-        <h1 id="title">Risultati Live dell'Arsenale delle Apparizioni</h1>
+        <h1 id="title">Arsenale delle Apparizioni</h1>
+        <h2 id="subtitle">Risultati in tempo reale</h2>
 
         <div id="results-container">
             <div class="result-bar-group">
-                <span class="label label-a">Spettacolo A</span>
+                <span class="label label-a">Squadra Blu</span>
                 <div class="bar-wrapper">
                     <div id="barA" class="bar bar-a"></div>
                 </div>
@@ -154,7 +183,7 @@
             </div>
 
             <div class="result-bar-group">
-                <span class="label label-b">Spettacolo B</span>
+                <span class="label label-b">Squadra Rossa</span>
                 <div class="bar-wrapper">
                     <div id="barB" class="bar bar-b"></div>
                 </div>
@@ -196,16 +225,12 @@
             }
         }
 
-        // FUNZIONE DI RESET
         async function resetVotazione() {
             if (confirm("Sei sicuro di voler azzerare tutti i voti dello spettacolo corrente?")) {
                 try {
                     await supabaseClient.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_a');
                     await supabaseClient.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_b');
-                    
-                    // Sblocca il tuo browser se stavi facendo dei test di voto
                     localStorage.removeItem("haVotato");
-                    
                     alert("Votazione azzerata sul palco! 🎭");
                 } catch (err) {
                     console.error("Errore durante il reset:", err);
@@ -215,7 +240,6 @@
 
         caricaEInizializzaDati();
 
-        // Realtime
         supabaseClient
             .channel('cambiamenti-voti')
             .on('postgres_changes', { event: 'UPDATE', scheme: 'public', table: 'voti_totali' }, () => {
