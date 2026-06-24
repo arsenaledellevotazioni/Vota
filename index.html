@@ -32,7 +32,7 @@
         // Inizializza Supabase (Inserisci i tuoi dati qui)
         const SUPABASE_URL = "https://orzpwezibuzpchehvdkw.supabase.co";
         const SUPABASE_KEY = "sb_publishable_uasoAypqJOLzeJAQpfU9qA__5c4SKTK";
-        const supabase = @supabase/supabase-js.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Controlla se l'utente ha già votato in passato
         if (localStorage.getItem("haVotato") === "true") {

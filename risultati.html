@@ -5,11 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Risultati in Tempo Reale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Libreria per i grafici -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; background: #fff; padding: 20px; }
-        .chart-container { width: 80%; max-width: 600px; margin: 50px auto; }
+        .chart-container { width: 80%; max-width: 600px; margin: 30px auto; }
+        
+        /* Stile per il pulsante di reset */
+        .btn-reset {
+            background-color: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+        .btn-reset:hover { background-color: #4b5563; }
     </style>
 </head>
 <body>
@@ -20,20 +33,22 @@
         <canvas id="graficoVoti"></canvas>
     </div>
 
+    <button class="btn-reset" onclick="resetVotazione()">Resetta Votazione</button>
+
     <script>
         const SUPABASE_URL = "https://orzpwezibuzpchehvdkw.supabase.co";
         const SUPABASE_KEY = "sb_publishable_uasoAypqJOLzeJAQpfU9qA__5c4SKTK";
         const supabase = @supabase/supabase-js.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Configurazione iniziale del grafico (Chart.js)
+        // Configurazione Chart.js
         const ctx = document.getElementById('graficoVoti').getContext('2d');
         const grafico = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Blu 'Rossi'],
+                labels: ['Opzione A', 'Opzione B'],
                 datasets: [{
                     label: 'Numero di Voti',
-                    data: [0, 0], // Dati di partenza
+                    data: [0, 0],
                     backgroundColor: ['#3b82f6', '#ef4444'],
                     borderWidth: 1
                 }]
@@ -43,25 +58,34 @@
             }
         });
 
-        // Funzione per caricare i dati attuali dal DB e aggiornare il grafico
         async function caricaEInizializzaDati() {
             let { data } = await supabase.from('voti_totali').select('*');
-            
-            // Ordiniamo i dati per assicurarci che vadano al posto giusto nel grafico
             const votoA = data.find(d => d.id === 'opzione_a')?.conteggio || 0;
             const votoB = data.find(d => d.id === 'opzione_b')?.conteggio || 0;
-
             grafico.data.datasets[0].data = [votoA, votoB];
             grafico.update();
         }
 
-        // 1. Carica i voti subito all'apertura della pagina
+        // FUNZIONE DI RESET
+        async function resetVotazione() {
+            if (confirm("Sei sicuro di voler azzerare tutti i voti?")) {
+                // Porta a 0 l'opzione A e l'opzione B su Supabase
+                await supabase.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_a');
+                await supabase.from('voti_totali').update({ conteggio: 0 }).eq('id', 'opzione_b');
+                
+                // Consente a te stesso di votare di nuovo se fai un test
+                localStorage.removeItem("haVotato");
+                
+                alert("Votazione azzerata!");
+            }
+        }
+
         caricaEInizializzaDati();
 
-        // 2. ASCOLTA IN TEMPO REALE: ogni volta che la tabella cambia, ricarica i dati
+        // Realtime
         supabase
             .channel('cambiamenti-voti')
-            .on('postgres_changes', { event: 'UPDATE', scheme: 'public', table: 'voti_totali' }, () => {
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'voti_totali' }, () => {
                 caricaEInizializzaDati();
             })
             .subscribe();
